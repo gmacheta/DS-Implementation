@@ -1,0 +1,270 @@
+package edu.ust.cisc;
+
+import java.util.Iterator;
+
+public class CiscDoublyLinkedList<E> implements CiscList<E> {
+    private Node<E> head;
+    private int size;
+
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        Node<E> myNode = this.head;
+        if(myNode != null) {
+            int y = -1;
+            while (myNode != null && y < size) {
+                y++;
+                if (myNode.data.equals(o)) {
+                    return true;
+                }myNode= myNode.next;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new CiscDoublyLinkedListIterator();
+    }
+
+    @Override
+    public Object[] toArray() {
+        Object[] arr = new Object[size];
+        Node<E> myNode = this.head;
+        int u=0;
+        if(myNode != null){
+            while(myNode != null&&u<size){
+                arr[u]=myNode.data;
+               myNode= myNode.next;u++;}
+        }
+        return arr;
+    }
+
+    @Override
+    public boolean add(E e) {
+        if(size ==0){
+            Node node = new Node(e, null,null);
+            node.next = node;
+            node.prev = node;
+            head = node;
+        } else {
+            Node node = new Node(e, head, head.prev);
+            head.prev.next = node;
+            head.prev = node;
+        }
+       size++;
+        return true;
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        Node<E> myNode = this.head;
+        if(myNode != null){ int y=-1;
+            while(myNode != null&&y<size){y++;
+                if (myNode.data.equals(o)){
+                    if(size==1){
+                        myNode.prev.next = myNode.next;
+                        myNode.next.prev = myNode.prev;
+                        head = null;
+                        size--;
+                        return  true; }
+                    else if(y==0){
+                        myNode.prev.next = myNode.next;
+                        myNode.next.prev = myNode.prev;
+                        head = myNode.next;
+                        size--;
+                        return  true;}
+                    else{
+                        myNode.prev.next = myNode.next;
+                        myNode.next.prev = myNode.prev;
+                        size--;
+                        return  true;}
+
+
+                }myNode= myNode.next;}
+        }
+        return false;
+    }
+
+    @Override
+    public void clear() {
+        head = null;
+        size=0;
+    }
+
+    @Override
+    public E get(int index) {
+        if (index>=size||index<0){throw new IndexOutOfBoundsException();}
+        int y=0;
+        Node<E> myNode = this.head;
+        if(myNode != null) {
+            while (myNode != null) {
+                if (y == index) {
+                    return myNode.data;
+                }
+                myNode= myNode.next;y++;
+            }
+        }
+        return null;
+
+    }
+
+    @Override
+    public E set(int index, E element) {
+        if (index>=size||index<0){throw new IndexOutOfBoundsException();}
+        int y=0;
+        Node<E> myNode = this.head;
+        if(myNode != null) {
+            while (myNode != null) {
+                if (y == index) {
+                    Node<E> myNode2 = myNode;
+                    myNode.data=element;
+                    return myNode2.data;
+                }
+                myNode= myNode.next;y++;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void add(int index, E element) {
+        if (index>size||index<0){throw new IndexOutOfBoundsException();}
+        else {if(size==0){
+            Node<E> myNode2=new Node<E> (element,null,null);
+            myNode2.next=myNode2;
+            myNode2.prev=myNode2;
+            head=myNode2;
+            size++;
+        }
+
+            else{
+            if(index==0){
+                Node<E> myNode = this.head;
+                Node<E> myNode2=new Node<E> (element,head,head.prev);
+                myNode.prev.next=myNode2;
+                myNode.prev=myNode2;
+                head=myNode2;
+                size++;
+
+            }
+            else{
+                if(index==size){
+                    Node node = new Node(element, head, head.prev);
+                    head.prev.next = node;
+                    head.prev = node;
+                    size++;
+
+                }
+                else{
+            int y=0;
+            Node<E> myNode = this.head;
+            if(myNode != null){
+                while(myNode != null&&y<size){
+                    if (y==index){
+                        Node<E> myNode2=new Node<E> (element, myNode,myNode.prev);
+                        myNode.prev.next=myNode2;
+                        myNode.prev=myNode2;
+                        size++;
+                    }y++;myNode= myNode.next;
+                }
+            }}}
+            }
+
+        }
+
+    }
+
+    @Override
+    public E remove(int index) {
+
+        if (index>=size||index<0){throw new IndexOutOfBoundsException();}
+        else {
+            int y=0;
+            Node<E> myNode = this.head;
+            if(myNode != null){
+                while(myNode != null){
+                    if (y == index){
+                        if(size==1){Node<E> myNode2 = myNode;
+                            myNode.prev.next = myNode.next;
+                            myNode.next.prev = myNode.prev;
+                            head = null;
+                            size--;
+                            return  myNode2.data; }
+                        else if(y==0){Node<E> myNode2 = myNode;
+                            myNode.prev.next = myNode.next;
+                            myNode.next.prev = myNode.prev;
+                            head = myNode.next;
+                            size--;
+                            return  myNode2.data;}
+                        else{ Node<E> myNode2 = myNode;
+                            myNode.prev.next = myNode.next;
+                            myNode.next.prev = myNode.prev;
+                            size--;
+                            return  myNode2.data;}
+
+
+                    }myNode= myNode.next;y++;}
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public int indexOf(Object o) {
+        int i=0;
+        Node node = new Node(o, null,null);
+        node = this.head;
+        if(node != null){
+           while(node != null){
+            if (node.data.equals(o)){
+                return i;
+            }node= node.next;i++;}
+        }
+        return -1;
+    }
+    private static class Node<E> {
+        private E data;
+        private Node<E> next;
+        private Node<E> prev;
+
+        private Node (E data, Node<E> next, Node<E> prev){
+            this.data = data;
+            this.next = next;
+            this.prev = prev;
+        }
+    }
+    private class CiscDoublyLinkedListIterator implements Iterator<E> {
+
+        private Node<E> nextNode;
+        private int nextNodeIndex;
+
+        public CiscDoublyLinkedListIterator(){
+            nextNode = head;
+            nextNodeIndex = 0;
+        }
+        @Override
+        public boolean hasNext() {
+            return nextNodeIndex<size;
+        }
+
+        @Override
+        public E next() {
+            E value = nextNode.data;
+            nextNode = nextNode.next;
+            nextNodeIndex++;
+            return value;
+
+        }
+    }
+}
