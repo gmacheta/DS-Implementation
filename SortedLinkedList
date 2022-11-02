@@ -1,0 +1,232 @@
+package edu.ust.cisc;
+
+import java.util.Iterator;
+
+public class CiscSortedLinkedList <E extends Comparable <E>> implements CiscList<E> {
+
+    private Node<E> head;
+    private int size;
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        if(size==0){return false;}
+      else  if (indexOf(o)==-1) {return false;}
+        else {return true;}
+
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new CiscLinkedListIterator();
+    }
+
+    @Override
+    public Object[] toArray() {
+        Object[] arr = new Object[size];
+        if(size==0){return arr;}
+        else{return toArray(arr,0,head);}
+
+    }
+    private Object[] toArray(Object[] arr, int index, Node n){
+        arr[index]=n.data;
+        if(n.next==null){return arr;}
+        else {return toArray(arr,index+1,n.next);}
+    }
+    @Override
+    public boolean add(E e) {
+        if(size==0){
+            Node node = new Node(e, null);
+           head=node;
+           size++;
+           return true;
+        } else if(head.data.compareTo((E)e)>0) {
+            Node node = new Node(e, head);
+            head=node;
+            size++;
+            return true;
+        } else{
+            return add(e,head);
+        }
+    }
+    private boolean add(E element, Node<E> n){
+        if(n.next==null){
+            Node node = new Node(element,null);
+            n.next=node;
+            size++;
+            return true;
+        }else     if(n.next.data.compareTo(element)>0){
+            Node node = new Node(element,n.next);
+            n.next=node;
+            size++;
+            return true;
+        }else {return add(element,n.next);}
+
+    }
+
+    @Override
+    public boolean remove(Object o) {
+       if(size==0){
+           return false;
+       } else if(head.data.equals(o)) {
+           head=head.next;
+           size--;
+           return true;
+       } else {
+           return remove(o, head);
+       }
+    }
+    private boolean remove(Object o, Node<E> n ){
+        if(n.next == null){
+            return false;
+        } else if(n.next.data.compareTo((E)o)>0) {
+            return false;
+        } else if(n.next.data.compareTo((E)o)==0){
+            n.next=n.next.next;
+            size--;
+            return true;
+        } else {
+            return remove(o, n.next);
+        }
+    }
+    @Override
+    public void clear() {
+        size=0;
+        head=null;
+    }
+
+    @Override
+    public E get(int index) {
+        if (index>=size||index<0){throw new IndexOutOfBoundsException();}
+        else return get(index,0,head);
+    }
+    private E get(int index, int currentIndex, Node n){
+        if(index==currentIndex) {return (E) n.data;}
+       else{ return get(index,currentIndex+1,n.next);}
+    }
+
+    @Override
+    public E set(int index, E element) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void add(int index, E element) {
+        if (index>=size||index<0){throw new UnsupportedOperationException();}
+      else if(size==0){
+            Node node = new Node(element, null);
+            head=node;
+            size++;
+        }
+       else if (index==0){
+           Node node = new Node(element, head);
+            head=node;
+            size++;}
+        else {add (index,0,element,head);}
+    }
+    private boolean add(int index,int n, E e, Node node){
+      if (index==n+1){
+          Node node1 = new Node(e, node.next);
+          node.next=node.next;
+          return true;
+      }
+        else return add(index,n+1,e,node.next);
+    }
+    @Override
+    public E remove(int index) {
+        if (index>=size||index<0){throw new IndexOutOfBoundsException();}
+        else if(index==0){
+            E temp= (E) head.data;
+            head=head.next;
+            size--;
+            return temp;
+        }
+        else{
+            return remove(index,0,head);
+        }
+    }
+    private E remove(int index,int currentIndex,Node n){
+        if(index==currentIndex+1){
+           E temp= (E) n.next.data;
+            n.next=n.next.next;
+            size--;
+            return temp;
+        }
+        else {return remove(index,currentIndex+1,n.next);}
+    }
+    @Override
+    public int indexOf(Object o) {
+
+       return indexOf(o,0,head);
+
+
+    }
+    private int indexOf(Object o, int currentIndex, Node n){
+        if (n.data.equals(o)){return currentIndex;}
+        else {if(n.next==null){return -1;}
+            else{
+            return indexOf(o,currentIndex+1, n.next);
+        }}
+    }
+
+    public String toString(){
+        if(size==0) {
+            return "[]";
+        } else if(size==1){
+            return "["+head.data+"]";
+        } else{
+            return "["+toString(head)+"]";
+        }
+    }
+    private String toString(Node<E> n){
+        if(n==null){
+            return "";
+        } if (n.next==null){
+            return n.data.toString();
+        }
+        return n.data.toString()+", "+toString(n.next);
+    }
+
+    private static class Node<E> {
+        private E data;
+        private Node<E> next;
+
+
+        private Node (E data, Node<E> next){
+            this.data = data;
+            this.next = next;
+
+        }
+    }
+    private class CiscLinkedListIterator implements Iterator<E> {
+
+        private Node<E> nextNode;
+        private int nextNodeIndex;
+
+        public CiscLinkedListIterator(){
+            nextNode = head;
+            nextNodeIndex = 0;
+        }
+        @Override
+        public boolean hasNext() {
+            return nextNodeIndex<size;
+        }
+
+        @Override
+        public E next() {
+            E value = nextNode.data;
+            nextNode = nextNode.next;
+            nextNodeIndex++;
+            return value;
+
+        }
+    }
+}
